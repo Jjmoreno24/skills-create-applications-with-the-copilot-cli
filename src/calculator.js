@@ -64,28 +64,36 @@ function compute(op, a, b) {
   }
 }
 
-// Main
-const argv = process.argv.slice(2);
-if (argv.length === 0 || argv.includes('--help') || argv.includes('-h')) {
-  printHelp();
+// Main CLI entrypoint (only run when invoked directly)
+function main(argv = process.argv.slice(2)) {
+  if (argv.length === 0 || argv.includes('--help') || argv.includes('-h')) {
+    printHelp();
+    process.exit(0);
+  }
+
+  if (argv.length < 3) {
+    exitError('insufficient arguments. See --help for usage.');
+  }
+
+  const [op, aRaw, bRaw] = argv;
+  const a = parseNumber(aRaw);
+  const b = parseNumber(bRaw);
+  if (a === null) exitError(`invalid number: ${aRaw}`);
+  if (b === null) exitError(`invalid number: ${bRaw}`);
+
+  const result = compute(op.toLowerCase(), a, b);
+  if (result && typeof result === 'object' && result.error) {
+    exitError(result.error);
+  }
+
+  // Print result with minimal formatting (preserve floats)
+  console.log(result);
   process.exit(0);
 }
 
-if (argv.length < 3) {
-  exitError('insufficient arguments. See --help for usage.');
+if (require.main === module) {
+  main();
 }
 
-const [op, aRaw, bRaw] = argv;
-const a = parseNumber(aRaw);
-const b = parseNumber(bRaw);
-if (a === null) exitError(`invalid number: ${aRaw}`);
-if (b === null) exitError(`invalid number: ${bRaw}`);
-
-const result = compute(op.toLowerCase(), a, b);
-if (result && typeof result === 'object' && result.error) {
-  exitError(result.error);
-}
-
-// Print result with minimal formatting (preserve floats)
-console.log(result);
-process.exit(0);
+// Export functions for unit testing
+module.exports = { compute, parseNumber, printHelp };
