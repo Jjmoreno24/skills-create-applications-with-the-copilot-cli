@@ -37,6 +37,8 @@ function exitError(msg) {
 }
 
 function parseNumber(input) {
+  if (typeof input !== 'string') return null;
+  if (input.trim() === '') return null;
   const n = Number(input);
   if (!isFinite(n)) return null;
   return n;
