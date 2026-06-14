@@ -28,8 +28,35 @@ describe('Calculator compute()', () => {
     expect(res.error).toBe('division by zero');
   });
 
+  test('modulo: 10 % 3 => 1', () => {
+    expect(compute('mod', 10, 3)).toBe(1);
+    expect(compute('%', 10, 3)).toBe(1);
+  });
+
+  test('modulo by zero returns error', () => {
+    const res = compute('mod', 5, 0);
+    expect(res).toBeTruthy();
+    expect(res.error).toBe('modulo by zero');
+  });
+
+  test('power: 2 ** 8 => 256', () => {
+    expect(compute('pow', 2, 8)).toBe(256);
+    expect(compute('**', 2, 8)).toBe(256);
+  });
+
+  test('square root: sqrt 9 => 3', () => {
+    expect(compute('sqrt', 9)).toBe(3);
+    expect(compute('sqrt', 2)).toBeCloseTo(Math.sqrt(2));
+  });
+
+  test('square root of negative returns error', () => {
+    const res = compute('sqrt', -4);
+    expect(res).toBeTruthy();
+    expect(res.error).toBe('square root of negative number');
+  });
+
   test('unsupported operation returns error object', () => {
-    const res = compute('pow', 2, 3);
+    const res = compute('unknown', 2, 3);
     expect(res).toBeTruthy();
     expect(typeof res).toBe('object');
     expect(res.error).toMatch(/unsupported operation/);
